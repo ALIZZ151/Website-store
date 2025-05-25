@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toko Hosting Modern</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            /* --- MODIFIKASI UNTUK BACKGROUND --- */
+            background-image: url('background-host.jpeg'); /* Ganti 'background-host.jpeg' dengan nama file gambar Anda jika berbeda */
+            background-size: cover; /* Membuat gambar menutupi seluruh area body */
+            background-position: center center; /* Memusatkan gambar */
+            background-repeat: no-repeat; /* Mencegah gambar berulang */
+            background-attachment: fixed; /* Membuat background tetap saat scroll (opsional) */
+            /* --- Akhir Modifikasi Background --- */
+            color: #333; /* Warna teks default, mungkin perlu disesuaikan agar kontras dengan background */
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 30px auto; /* Menambah margin atas agar tidak terlalu mepet header */
+            padding: 25px;
+            /* Membuat kontainer sedikit transparan agar background terlihat, atau tetap solid */
+            background-color: rgba(255, 255, 255, 0.9); /* Putih dengan 90% opacity */
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 35px;
+            padding-bottom: 25px;
+            border-bottom: 2px solid #007bff;
+        }
+
+        header h1 {
+            color: #007bff;
+            margin: 0;
+            font-size: 2.8em;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1); /* Efek shadow pada judul */
+        }
+
+        .product-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .product-item {
+            background-color: rgba(255, 255, 255, 0.95); /* Sedikit transparan untuk konsistensi */
+            border: 1px solid #d1d1d1;
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .product-item:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        .product-item h3 {
+            margin-top: 0;
+            color: #0056b3;
+            font-size: 1.5em;
+            margin-bottom: 12px;
+        }
+
+        .product-item .price {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #28a745;
+            margin-bottom: 18px;
+        }
+
+        .product-item .description {
+            font-size: 0.98em;
+            color: #454545; /* Warna teks deskripsi sedikit lebih gelap agar terbaca */
+            margin-bottom: 22px;
+            min-height: 45px;
+        }
+
+        .order-button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 1.05em;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .order-button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        .order-button:active {
+            transform: scale(0.95);
+        }
+
+        /* Modal Styling */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.7); /* Overlay lebih gelap */
+        }
+
+        .modal-content {
+            background-color: #ffffff; /* Modal tetap solid agar mudah dibaca */
+            margin: 8% auto; /* Menyesuaikan posisi modal */
+            padding: 35px;
+            border: none; /* Hapus border jika diinginkan */
+            width: 90%;
+            max-width: 550px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        .modal-content h2 {
+            color: #007bff;
+            margin-top: 0;
+            font-size: 1.8em; /* Ukuran font judul modal */
+        }
+
+        .modal-content p {
+            margin-bottom: 22px;
+            font-size: 1.15em; /* Ukuran font paragraf modal */
+            color: #333; /* Warna teks dalam modal */
+        }
+
+        .close-button {
+            color: #777;
+            float: right;
+            font-size: 30px;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .confirm-payment-button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 1.05em;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 12px;
+        }
+
+        .confirm-payment-button:hover {
+            background-color: #1e7e34;
+        }
+
+        #payment-instructions {
+            background-color: #f0f4f8; /* Warna latar instruksi pembayaran */
+            padding: 18px;
+            border-radius: 6px;
+            margin-bottom: 22px;
+            font-size: 0.95em;
+            text-align: left;
+            border-left: 5px solid #007bff;
+        }
+        #payment-instructions strong {
+            color: #0056b3;
+        }
+        /* Agar teks di dalam container utama lebih mudah dibaca di atas background */
+        .container h1, .container p, .container h3, .container .price, .container .description {
+             /* Anda bisa atur warna teks di sini jika diperlukan, misal jika background membuat teks sulit dibaca */
+             /* Contoh: color: #FFFFFF; jika background gelap dan teks butuh warna terang */
+        }
+        .product-item h3, .product-item .price, .product-item .description {
+            color: #333; /* Pastikan teks produk tetap terbaca */
+        }
+        .product-item .price {
+            color: #28a745;
+        }
+         .product-item h3 {
+            color: #0056b3;
+        }
+
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>XYZ Hosting Store</h1>
+        </header>
+
+        <div class="product-list" id="productList">
+            </div>
+    </div>
+
+    <div id="orderModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal()">&times;</span>
+            <h2 id="modalProductName"></h2>
+            <div id="modalStep1">
+                <p>Anda akan memesan: <strong id="orderItemName"></strong></p>
+                <p>Harga: <strong id="orderItemPrice"></strong></p>
+                <div id="payment-instructions">
+                    <p><strong>Instruksi Pembayaran:</strong></p>
+                    <p>Silakan lakukan transfer ke rekening berikut:</p>
+                    <p>Dana: <strong>085943502869</strong> a/n Toko Hosting Alizz</p> <p>Jumlah: <strong id="paymentAmount"></strong></p>
+                    <p>Mohon sertakan <strong>nama produk</strong> dalam berita transfer.</p>
+                    <p>Setelah melakukan transfer, chat nomor WhatsApp <a href="https://wa.me/6285943502869" target="_blank">https://wa.me/6285943502869</a> dan kirim bukti transfer.</p>
+                </div>
+                <button class="confirm-payment-button" onclick="showStep2()">Saya Sudah Transfer</button>
+            </div>
+            <div id="modalStep2" style="display:none;">
+                <h2>Konfirmasi Pembayaran</h2>
+                <p>Terima kasih atas konfirmasi pembayaran Anda!</p>
+                <p>Pesanan Anda untuk <strong id="confirmedItemName"></strong> sedang diproses.</p>
+                <p id="deliveryInfo">Informasi lebih lanjut atau detail produk akan dikirimkan ke email Anda atau Anda akan dihubungi melalui WhatsApp (jika ada).</p>
+                <button class="order-button" onclick="closeModal()">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const products = [
+            { name: "RESELLER PUBLIC ANTI PTPT", price: "4K", itemDetails: "Akses ke panel reseller publik.", requiresWA: false },
+            { name: "RESELLER PRIVATE ANTI PTPT", price: "5K", itemDetails: "Akses ke panel reseller private khusus.", requiresWA: false },
+            { name: "ADP PUBLIC ANTI PTPT", price: "8K", itemDetails: "Informasi akun ADP Publik.", requiresWA: false },
+            { name: "ADP PRIVATE ANTI PTPT", price: "9K", itemDetails: "Informasi akun ADP Private.", requiresWA: false },
+            { name: "PT PUBLIC ANTI PTPT", price: "10K", itemDetails: "Detail akun PT Publik.", requiresWA: false },
+            { name: "PT PRIVATE ANTI PTPT", price: "13K", itemDetails: "Detail akun PT Private.", requiresWA: false },
+            { name: "OWN PUBLIC ANTI PTPT", price: "12K", itemDetails: "Akses Owner Publik.", requiresWA: false },
+            { name: "OWN PRIVATE ANTI PTPT", price: "15K", itemDetails: "Akses Owner Private.", requiresWA: false },
+            { name: "SUBDOMAIN", price: "5K", itemDetails: "Nama subdomain pilihan Anda akan didaftarkan (selama tersedia).", requiresWA: true, waMessage: "Untuk pemesanan Subdomain, silakan hubungi kami via WhatsApp untuk diskusi nama subdomain." },
+            { name: "INSTALL PTERODACTYL", price: "5K", itemDetails: "Jasa instalasi panel Pterodactyl pada server Anda.", requiresWA: true, waMessage: "Untuk jasa Install Pterodactyl, mohon hubungi kami via WhatsApp untuk detail server." },
+            { name: "UNINSTALL PTERODACTYL", price: "5K", itemDetails: "Jasa uninstall panel Pterodactyl dari server Anda.", requiresWA: true, waMessage: "Untuk jasa Uninstall Pterodactyl, mohon hubungi kami via WhatsApp untuk detail server." },
+            { name: "INSTALL NODE", price: "5K", itemDetails: "Jasa instalasi Node.js pada server Anda.", requiresWA: true, waMessage: "Untuk jasa Install Node.js, mohon hubungi kami via WhatsApp untuk detail server." },
+            { name: "INSTALL THEMA", price: "5K", itemDetails: "Jasa instalasi tema pada platform Anda (misal: Pterodactyl, WordPress).", requiresWA: true, waMessage: "Untuk jasa Install Thema, mohon hubungi kami via WhatsApp untuk detail platform dan tema." },
+            { name: "UNINSTALL THEME", price: "5K", itemDetails: "Jasa uninstall tema dari platform Anda.", requiresWA: true, waMessage: "Untuk jasa Uninstall Theme, mohon hubungi kami via WhatsApp untuk detail platform." },
+            { name: "APK QRIS NO KTP", price: "3K", itemDetails: "File APK untuk aplikasi QRIS (tanpa memerlukan KTP untuk versi ini).", requiresWA: false },
+            { name: "NOKOS", price: "10K", itemDetails: "Nomor kosong (detail akan diberikan setelah pembayaran).", requiresWA: false },
+            { name: "MURID NOKOS", price: "5K", itemDetails: "Panduan atau grup khusus untuk 'murid nokos'.", requiresWA: true, waMessage: "Untuk Murid Nokos, silakan hubungi kami via WhatsApp untuk detail lebih lanjut." },
+            { name: "JPM", price: "5K", itemDetails: "Jasa Pasang Script/Module (detail spesifik akan dikonfirmasi).", requiresWA: true, waMessage: "Untuk JPM (Jasa Pasang), silakan hubungi kami via WhatsApp untuk diskusi kebutuhan script/module Anda." },
+            { name: "JASA SHARE", price: "4K", itemDetails: "Jasa share konten Anda ke berbagai platform.", requiresWA: true, waMessage: "Untuk Jasa Share, silakan hubungi kami via WhatsApp untuk detail konten dan target platform." },
+            { name: "MURBUG", price: "5K", itemDetails: "MURBUG adalah murid bug.", requiresWA: true, waMessage: "Untuk MURBUG, silakan hubungi kami via WhatsApp untuk detail lebih lanjut." } // Pastikan waMessage untuk MURBUG juga diupdate jika perlu
+        ];
+
+        const productListContainer = document.getElementById('productList');
+        const modal = document.getElementById('orderModal');
+        const modalProductName = document.getElementById('modalProductName');
+        const orderItemName = document.getElementById('orderItemName');
+        const orderItemPrice = document.getElementById('orderItemPrice');
+        const paymentAmount = document.getElementById('paymentAmount');
+        const confirmedItemName = document.getElementById('confirmedItemName');
+        const deliveryInfo = document.getElementById('deliveryInfo');
+
+        let currentProduct = null;
+
+        function renderProducts() {
+            productListContainer.innerHTML = ''; // Kosongkan dulu
+            products.forEach(product => {
+                const productDiv = document.createElement('div');
+                productDiv.className = 'product-item';
+
+                const productName = document.createElement('h3');
+                productName.textContent = product.name;
+
+                const productPrice = document.createElement('p');
+                productPrice.className = 'price';
+                productPrice.textContent = product.price === "Hubungi WA" ? "Hubungi via WhatsApp" : `Rp ${product.price.replace('K', '.000')}`;
+
+                const productDescription = document.createElement('p');
+                productDescription.className = 'description';
+                productDescription.textContent = product.itemDetails || "Detail produk akan diberikan setelah pembayaran.";
+
+                const orderButton = document.createElement('button');
+                orderButton.className = 'order-button';
+                orderButton.textContent = product.isContactViaWA ? "Hubungi via WA" : "Order Sekarang";
+
+                if (product.isContactViaWA) {
+                    orderButton.onclick = () => {
+                        const waNumber = "6285943502869"; // Ganti dengan nomor WhatsApp Anda
+                        const message = encodeURIComponent(product.waMessage || `Halo, saya tertarik dengan produk ${product.name}.`);
+                        window.open(`https://wa.me/${waNumber}?text=${message}`, '_blank');
+                    };
+                } else {
+                    orderButton.onclick = () => openModal(product);
+                }
+
+                productDiv.appendChild(productName);
+                productDiv.appendChild(productPrice);
+                productDiv.appendChild(productDescription);
+                productDiv.appendChild(orderButton);
+                productListContainer.appendChild(productDiv);
+            });
+        }
+
+        function openModal(product) {
+            currentProduct = product;
+            modalProductName.textContent = `Order: ${product.name}`;
+            orderItemName.textContent = product.name;
+            orderItemPrice.textContent = `Rp ${product.price.replace('K', '.000')}`;
+            paymentAmount.textContent = `Rp ${product.price.replace('K', '.000')}`;
+
+            document.getElementById('modalStep1').style.display = 'block';
+            document.getElementById('modalStep2').style.display = 'none';
+            modal.style.display = "block";
+
+            // Perbarui instruksi pembayaran di modal dengan nomor WhatsApp yang benar
+            const paymentInstructionsDiv = document.getElementById('payment-instructions');
+            const waLink = paymentInstructionsDiv.querySelector('a');
+            if (waLink) {
+                waLink.href = "https://wa.me/6285943502869"; // Pastikan nomor WA di sini benar
+                waLink.textContent = "https://wa.me/6285943502869";
+            }
+
+
+            if (product.requiresWA) {
+                 deliveryInfo.textContent = `Setelah pembayaran, kami akan menghubungi Anda via WhatsApp atau Anda dapat menghubungi kami terlebih dahulu untuk koordinasi terkait ${product.name}. ${product.waMessage || ''}`;
+            } else {
+                 deliveryInfo.textContent = `Detail ${product.name} akan dikirimkan setelah pembayaran dikonfirmasi. Biasanya berupa link, kode akses, atau file.`;
+            }
+        }
+
+        function closeModal() {
+            modal.style.display = "none";
+            currentProduct = null;
+        }
+
+        function showStep2() {
+            if (!currentProduct) return;
+
+            document.getElementById('modalStep1').style.display = 'none';
+            document.getElementById('modalStep2').style.display = 'block';
+            confirmedItemName.textContent = currentProduct.name;
+
+            let itemInfo = currentProduct.itemDetails || `Detail untuk ${currentProduct.name} akan segera diproses.`;
+
+            if (currentProduct.name === "APK QRIS NO KTP") {
+                itemInfo = "Link download APK QRIS akan dikirimkan ke email Anda atau melalui chat setelah pembayaran diverifikasi. Pastikan Anda memeriksa folder spam.";
+            } else if (currentProduct.name === "NOKOS") {
+                itemInfo = "Nomor Kosong akan dikirimkan melalui chat pribadi setelah pembayaran dikonfirmasi. Mohon tunggu konfirmasi dari admin.";
+            }
+
+            deliveryInfo.innerHTML = `<p>Terima kasih! Pesanan Anda untuk <strong>${currentProduct.name}</strong> telah diterima dan akan segera diproses setelah pembayaran Anda diverifikasi.</p>
+                                   <p><strong>Barang yang akan Anda dapatkan (simulasi):</strong> ${itemInfo}</p>
+                                   <p>${currentProduct.requiresWA ? `Mohon konfirmasi pembayaran Anda melalui WhatsApp di <a href="https://wa.me/6285943502869" target="_blank">https://wa.me/6285943502869</a> agar pesanan dapat segera kami proses. ${currentProduct.waMessage || ''}` : 'Kami akan segera memverifikasi pembayaran Anda.'}</p>`;
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+        renderProducts();
+    </script>
+
+</body>
